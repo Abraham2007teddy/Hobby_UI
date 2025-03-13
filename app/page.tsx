@@ -146,7 +146,7 @@ export default function Home() {
     }
   };
 
-
+  // delete
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return;
 
