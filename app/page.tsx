@@ -12,6 +12,7 @@ interface Book {
   author: string;
   price: number;
   imageBase64?: string;
+  pdfBase64?: string;
 }
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [view, setView] = useState<"login" | "signup" | "books" | "add" | "edit">("login");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchBooks();
@@ -113,6 +115,12 @@ export default function Home() {
       formData.append("imageFile", imageFile);
     }
 
+    if (pdfFile) {
+      formData.append("pdfFile", pdfFile);
+    }
+
+    console.log("FormData:", formData);
+
     try {
       const res = await fetch("https://localhost:7153/api/books", {
         method: "POST",
@@ -126,10 +134,12 @@ export default function Home() {
         return alert(`Failed to add book: ${result.message || "Unknown error"}`);
       }
 
-      setBooks([...books, result]);
+      setBooks((prevBooks) => [...prevBooks, result]);
+
       setView("books");
       setForm({ title: "", author: "", price: 0 });
       setImageFile(null);
+      setPdfFile(null);
     } catch (error) {
       console.error("Request Failed:", error);
       alert("Failed to add book. Check console for details.");
@@ -175,6 +185,7 @@ export default function Home() {
               setForm={setForm}
               handleSubmit={handleAddBook}
               setImageFile={setImageFile}
+              setPdfFile={setPdfFile}
             />
           )}
           {view === "edit" && (
@@ -184,13 +195,27 @@ export default function Home() {
               setForm={setForm}
               handleSubmit={handleSaveEdit}
               setImageFile={setImageFile}
+              setPdfFile={setPdfFile}
             />
           )}
 
           {/* Only show BookList when the view is "books" */}
           {view === "books" && (
-            <BookList books={books} loggedIn={loggedIn} handleEdit={handleEdit} handleDelete={handleDelete} />
+            <BookList
+              books={books}
+              loggedIn={loggedIn}
+              handleEdit={handleEdit}
+              handleDelete={(bookId: string | undefined) => {
+                // Handle undefined bookId, prevent errors if undefined
+                if (bookId) {
+                  handleDelete(bookId); // Call the original handleDelete only when bookId is not undefined
+                } else {
+                  console.warn('Invalid book ID.');
+                }
+              }}
+            />
           )}
+
         </>
 
       )}
