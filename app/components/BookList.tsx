@@ -2,6 +2,8 @@ import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import * as pdfjs from 'pdfjs-dist';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import BookComments from './BookComments';
+import { useState } from 'react';
 
 interface Book {
     id?: string;
@@ -20,6 +22,8 @@ interface BookListProps {
 }
 
 const BookList = ({ books, handleEdit, handleDelete, loggedIn }: BookListProps) => {
+    const [expandedBook, setExpandedBook] = useState<string | null>(null);
+
     const handleDownloadPdf = (pdfBase64: string | undefined) => {
         if (pdfBase64) {
             const link = document.createElement('a');
@@ -55,7 +59,7 @@ const BookList = ({ books, handleEdit, handleDelete, loggedIn }: BookListProps) 
                             {book.pdfBase64 && (
                                 <div className="mt-4">
                                     <h4 className="font-semibold text-gray-700 mb-2">PDF Preview:</h4>
-                                    <div className="overflow-hidden rounded-lg w-full max-h-96 overflow-y-auto shadow-md">  {/* Added overflow-y-auto */}
+                                    <div className="overflow-hidden rounded-lg w-full h-[50vh] overflow-y-auto shadow-md">  {/* Added overflow-y-auto */}
                                         <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`}>
                                             <Viewer
                                                 fileUrl={`data:application/pdf;base64,${book.pdfBase64}`}
@@ -99,6 +103,22 @@ const BookList = ({ books, handleEdit, handleDelete, loggedIn }: BookListProps) 
                             </button>
                         </div>
                     )}
+                    {/* Comments Dropdown */}
+                    <button
+                        className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-md w-full"
+                        onClick={() => setExpandedBook(expandedBook === book.id ? null : book.id!)}
+                    >
+                        {expandedBook === book.id ? "Hide Comments" : "Show Comments"}
+                    </button>
+
+
+                    {/* Comments Section */}
+                    {expandedBook === book.id && (
+                        <div className="mt-4 p-4 border rounded-lg bg-gray-100 max-h-60 overflow-y-auto">
+                            <BookComments bookId={book.id} username="Ibrohim" loggedIn={loggedIn} />
+                        </div>
+                    )}
+
                 </div>
             ))}
         </div>

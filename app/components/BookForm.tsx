@@ -15,12 +15,12 @@ interface BookFormProps {
     setForm: React.Dispatch<React.SetStateAction<Book>>;
     handleSubmit: () => Promise<void>;
     setImageFile?: React.Dispatch<React.SetStateAction<File | null>>;
-    setPdfFile?: React.Dispatch<React.SetStateAction<File | null>>; // New setter for the PDF file
+    setPdfFile?: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 const BookForm: React.FC<BookFormProps> = ({ view, form, setForm, handleSubmit, setImageFile, setPdfFile }) => {
     const [localImage, setLocalImage] = useState<string | null>(null);
-    const [localPdf, setLocalPdf] = useState<string | null>(null); // Local state for previewing the PDF
+    const [localPdf, setLocalPdf] = useState<string | null>(null);
 
     useEffect(() => {
         if (view === "add") {
