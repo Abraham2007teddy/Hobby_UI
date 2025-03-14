@@ -1,6 +1,4 @@
-import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import * as pdfjs from 'pdfjs-dist';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import BookComments from './BookComments';
 import { useState } from 'react';
@@ -54,22 +52,6 @@ const BookList = ({ books, handleEdit, handleDelete, loggedIn }: BookListProps) 
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">{book.title}</h3>
                             <p className="text-sm text-gray-600 mb-2">{book.author}</p>
                             <p className="text-lg font-bold text-gray-900">${book.price}</p>
-
-                            {/* Show PDF if available */}
-                            {book.pdfBase64 && (
-                                <div className="mt-4">
-                                    <h4 className="font-semibold text-gray-700 mb-2">PDF Preview:</h4>
-                                    <div className="overflow-hidden rounded-lg w-full h-[50vh] overflow-y-auto shadow-md">  {/* Added overflow-y-auto */}
-                                        <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`}>
-                                            <Viewer
-                                                fileUrl={`data:application/pdf;base64,${book.pdfBase64}`}
-                                                initialPage={0}
-                                                renderLoader={(props) => <div>Loading...</div>} // Optional loading indicator
-                                            />
-                                        </Worker>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
 
